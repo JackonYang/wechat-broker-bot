@@ -42,6 +42,11 @@ $ pip3 install -r requirements.txt
 $ make install
 ```
 
+#### 配置
+
+
+在 'config.py' 中配置数据库连接等。
+
 
 #### 交互式命令行 DEBUG 工具
 
