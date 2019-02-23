@@ -1,10 +1,14 @@
-import time
 import socket
 
 from wxpy import (
     Bot,
     # Message,
     # SYSTEM,
+)
+
+from iutil.datestr import (
+    today,
+    readable_now,
 )
 
 from driver import (
@@ -21,7 +25,7 @@ myself_name = myself.name
 
 # environment info the login
 device_hostname = socket.gethostname()
-login_at = time.time()
+login_at = readable_now()
 
 # store login logs in MongoDB
 db_msg.login_log.insert_one({
@@ -34,13 +38,15 @@ db_msg.login_log.insert_one({
 
 @bot.register()
 def msg_receiver(msg):
+    bucket = today()
     # store message in MongoDB
-    db_msg.received_msg_raw.insert_one({
+    coll_name = 'received_msg_raw_%s' % bucket.replace('-', '')
+    db_msg[coll_name].insert_one({
         'puid': myself.puid,
         'myself_name': myself_name,
         'device_hostname': device_hostname,
         'login_at': login_at,
-        'received_at': time.time(),
+        'received_at': readable_now(),
         'msg': msg.raw,
     })
 
