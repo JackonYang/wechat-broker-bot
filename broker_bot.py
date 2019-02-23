@@ -36,19 +36,36 @@ db_msg.login_log.insert_one({
 })
 
 
-@bot.register()
+@bot.register(except_self=False, run_async=True)
 def msg_receiver(msg):
-    bucket = today()
-    # store message in MongoDB
-    coll_name = 'received_msg_raw_%s' % bucket.replace('-', '')
-    db_msg[coll_name].insert_one({
-        'puid': myself.puid,
-        'myself_name': myself_name,
-        'device_hostname': device_hostname,
-        'login_at': login_at,
-        'received_at': readable_now(),
-        'msg': msg.raw,
-    })
+    try:
+        bucket = today()
+        # store message in MongoDB
+        coll_name = 'received_msg_raw_%s' % bucket.replace('-', '')
+
+        callable_keys = [
+            'Text',
+        ]
+        for key in callable_keys:
+            if callable(msg.raw.get(key)):
+                msg.raw[key] = msg.raw[key]()
+
+        db_msg[coll_name].insert_one({
+            'puid': myself.puid,
+            'myself_name': myself_name,
+            'device_hostname': device_hostname,
+            'login_at': login_at,
+            'received_at': readable_now(),
+            'msg': msg.raw,
+        })
+    except Exception as e:
+        db_msg.errors.insert_one({
+            'puid': myself.puid,
+            'myself_name': myself_name,
+            'device_hostname': device_hostname,
+            'login_at': login_at,
+            'received_at': readable_now(),
+        })
 
 
 if __name__ == '__main__':
