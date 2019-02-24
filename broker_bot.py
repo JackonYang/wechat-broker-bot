@@ -31,9 +31,42 @@ login_at = readable_now()
 db_msg.login_log.insert_one({
     'puid': myself.puid,
     'device_hostname': device_hostname,
+    'myself_name': myself_name,
     'account_info': myself.raw,
     'login_at': login_at,
 })
+
+
+contact_categories = {
+    'groups': bot.groups,
+    'mps': bot.mps,
+    'friends': bot.friends,
+}
+
+
+def fetch_contacts(bot):
+    res = {}
+    for cate, meth in contact_categories.items():
+        rsp = meth(update=True)
+        data = [r.raw for r in rsp]
+        res[cate] = data
+    return res
+
+
+def dump(bot):
+    data = fetch_contacts(bot)
+
+    # store contacts info in MongoDB
+    db_msg.contacts.insert_one({
+        'puid': myself.puid,
+        'device_hostname': device_hostname,
+        'account_info': myself.raw,
+        'myself_name': myself_name,
+        'login_at': login_at,
+        'fetched_at': readable_now(),
+        "scheme_version": "1.0",
+        'data': data,
+    })
 
 
 @bot.register(except_self=False, run_async=True)
@@ -66,6 +99,7 @@ def msg_receiver(msg):
             'device_hostname': device_hostname,
             'login_at': login_at,
             'received_at': readable_now(),
+            'error': str(e),
         })
 
 
