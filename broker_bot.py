@@ -56,6 +56,7 @@ def msg_receiver(msg):
             'device_hostname': device_hostname,
             'login_at': login_at,
             'received_at': readable_now(),
+            "scheme_version": "1.0",
             'msg': msg.raw,
         })
     except Exception as e:
