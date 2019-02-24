@@ -1,4 +1,8 @@
 import socket
+import schedule
+import threading
+import time
+
 
 from wxpy import (
     Bot,
@@ -44,10 +48,10 @@ contact_categories = {
 }
 
 
-def fetch_contacts(bot):
+def fetch_contacts(bot, update=True):
     res = {}
     for cate, meth in contact_categories.items():
-        rsp = meth(update=True)
+        rsp = meth(update=update)
         data = [r.raw for r in rsp]
         res[cate] = data
     return res
@@ -67,6 +71,31 @@ def dump(bot):
         "scheme_version": "1.0",
         'data': data,
     })
+
+
+def run_continuously(interval=1):
+    """Continuously run, while executing pending jobs at each elapsed
+    time interval.
+    @return cease_continuous_run: threading.Event which can be set to
+    cease continuous run.
+    Please note that it is *intended behavior that run_continuously()
+    does not run missed jobs*. For example, if you've registered a job
+    that should run every minute and you set a continuous run interval
+    of one hour then your job won't be run 60 times at each interval but
+    only once.
+    """
+    cease_continuous_run = threading.Event()
+
+    class ScheduleThread(threading.Thread):
+        @classmethod
+        def run(cls):
+            while not cease_continuous_run.is_set():
+                schedule.run_pending()
+                time.sleep(interval)
+
+    continuous_thread = ScheduleThread()
+    continuous_thread.start()
+    return cease_continuous_run
 
 
 @bot.register(except_self=False, run_async=True)
@@ -101,6 +130,11 @@ def msg_receiver(msg):
             'received_at': readable_now(),
             'error': str(e),
         })
+
+
+schedule.every().day.at("22:00").do(dump, bot)
+
+schedule_thread = run_continuously()
 
 
 if __name__ == '__main__':
