@@ -60,20 +60,30 @@ def fetch_contacts(bot, update=True):
 
 
 def dump(bot):
-    data = fetch_contacts(bot)
+    try:
+        data = fetch_contacts(bot)
 
-    # store contacts info in MongoDB
-    db_msg.contacts.insert_one({
-        'puid': myself.puid,
-        'device_hostname': device_hostname,
-        'account_info': myself.raw,
-        'myself_name': myself_name,
-        'login_at': login_at,
-        'fetched_at': readable_now(),
-        'fetched_day': today(),
-        "scheme_version": "1.0",
-        'data': data,
-    })
+        # store contacts info in MongoDB
+        db_msg.contacts.insert_one({
+            'puid': myself.puid,
+            'device_hostname': device_hostname,
+            'account_info': myself.raw,
+            'myself_name': myself_name,
+            'login_at': login_at,
+            'fetched_at': readable_now(),
+            'fetched_day': today(),
+            "scheme_version": "1.0",
+            'data': data,
+        })
+    except Exception as e:
+        db_msg.errors.insert_one({
+            'puid': myself.puid,
+            'myself_name': myself_name,
+            'device_hostname': device_hostname,
+            'login_at': login_at,
+            'fetch_at': readable_now(),
+            'error': str(e),
+        })
 
 
 def run_continuously(interval=1):
