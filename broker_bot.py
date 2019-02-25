@@ -21,6 +21,8 @@ from driver import (
     db_msg,
 )
 
+from pub import publish
+
 
 bot = Bot(console_qr=True, cache_path=True)
 bot.enable_puid()
@@ -125,7 +127,7 @@ def msg_receiver(msg):
             if callable(msg.raw.get(key)):
                 msg.raw[key] = msg.raw[key]()
 
-        db_msg[coll_name].insert_one({
+        wrapped_msg = {
             'puid': myself.puid,
             'myself_name': myself_name,
             'device_hostname': device_hostname,
@@ -133,7 +135,11 @@ def msg_receiver(msg):
             'received_at': readable_now(),
             "scheme_version": "1.0",
             'msg': msg.raw,
-        })
+        }
+
+        db_msg[coll_name].insert_one(wrapped_msg)
+        publish(wrapped_msg)
+
     except Exception as e:
         db_msg.errors.insert_one({
             'puid': myself.puid,
