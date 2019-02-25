@@ -1,7 +1,12 @@
 import csv
+import os
 
 from driver import (
     db_msg,
+)
+
+from config import (
+    CONTACT_EXPORT_PATH,
 )
 
 
@@ -80,11 +85,12 @@ def dump_contacts():
             dump_category(
                 doc['myself_name'],
                 cate,
-                doc['data'][cate]
+                doc['data'][cate],
+                doc['day'],
             )
 
 
-def dump_category(owner, name, data):
+def dump_category(owner, name, data, day):
 
     # # dump all the headers to pick up valueable ones.
     # headers = set()
@@ -92,7 +98,15 @@ def dump_category(owner, name, data):
     #     headers.update(i.keys())
     headers = EXPORT_HEADERS[name]
 
-    with open('export-%s-%s.csv' % (owner, name), 'w', encoding='utf-8') as f_csv:
+    filename = os.path.join(
+        CONTACT_EXPORT_PATH,
+        '%s-%s-%s.csv' % (owner, name, day)
+    )
+
+    if not os.path.exists(CONTACT_EXPORT_PATH):
+        os.makedirs(CONTACT_EXPORT_PATH)
+
+    with open(filename, 'w', encoding='utf-8') as f_csv:
 
         dict_writer = csv.DictWriter(f_csv, headers, extrasaction='ignore')
         dict_writer.writeheader()

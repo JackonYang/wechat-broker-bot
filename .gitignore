@@ -1,5 +1,6 @@
 # .gitignore by jackon.me
 
+data
 *.log
 wxpy_puid.pkl
 wxpy.pkl
