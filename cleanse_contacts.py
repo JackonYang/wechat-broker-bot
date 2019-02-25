@@ -86,7 +86,7 @@ def dump_contacts():
                 doc['myself_name'],
                 cate,
                 doc['data'][cate],
-                doc['day'],
+                doc['fetched_day'],
             )
 
 
@@ -100,7 +100,7 @@ def dump_category(owner, name, data, day):
 
     filename = os.path.join(
         CONTACT_EXPORT_PATH,
-        '%s-%s-%s.csv' % (owner, name, day)
+        '%s-%s-%s.csv' % (owner, day, name)
     )
 
     if not os.path.exists(CONTACT_EXPORT_PATH):
