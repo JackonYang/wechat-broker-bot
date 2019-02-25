@@ -5,6 +5,7 @@ import config
 
 
 db_msg = MongoClient(config.MONGO_HOST_MSG)[config.MONGO_DBNAME_MSG]
+db_parser = MongoClient(config.MONGO_HOST_MSG)[config.MONGO_DBNAME_PARSER]
 
 r = redis.StrictRedis(host=config.REDIS_HOST_MSG, port=6379, db=config.REDIS_DB)
 
