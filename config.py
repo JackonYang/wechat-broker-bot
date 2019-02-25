@@ -7,10 +7,11 @@ REPO_ROOT = os.path.dirname(
 )
 
 MONGO_HOST_MSG = '192.168.1.66'
-MONGO_DBNAME_MSG = 'wechat_msg_personal'
+MONGO_DBNAME_MSG = 'wechat_msg_personal_prod'
 
 DAILY_DUMP_CONTACT_AT = '01:00'
-CONTACT_EXPORT_PATH = os.path.join(REPO_ROOT, 'data')
+CONTACT_EXPORT_PATH = os.path.join(REPO_ROOT, 'data/contacts')
+MESSAGE_EXPORT_PATH = os.path.join(REPO_ROOT, 'data/messages')
 
 
 if __name__ == '__main__':
