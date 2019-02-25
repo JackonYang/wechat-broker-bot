@@ -70,6 +70,7 @@ def dump(bot):
         'myself_name': myself_name,
         'login_at': login_at,
         'fetched_at': readable_now(),
+        'fetched_day': today(),
         "scheme_version": "1.0",
         'data': data,
     })
