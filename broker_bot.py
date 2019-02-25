@@ -15,6 +15,8 @@ from iutil.datestr import (
     readable_now,
 )
 
+import config
+
 from driver import (
     db_msg,
 )
@@ -132,7 +134,7 @@ def msg_receiver(msg):
         })
 
 
-schedule.every().day.at("22:00").do(dump, bot)
+schedule.every().day.at(config.DAILY_DUMP_CONTACT_AT).do(dump, bot)
 
 schedule_thread = run_continuously()
 
