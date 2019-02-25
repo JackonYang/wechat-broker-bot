@@ -5,3 +5,4 @@ redis==3.2.0
 pymongo==3.7.2
 iutil==0.1.3
 beautifulsoup4==4.7.1
+lxml==4.2.5
