@@ -84,5 +84,6 @@ def filter_sharing(msg_wrapper):
         {k: v and v.text for a in articles for k, v in a.items()}
     ]
     info['received_at'] = msg_wrapper['received_at']
+    info['received_day'] = msg_wrapper['received_at'].split()[0]
 
     db_parser.sharing.insert_one(info)
