@@ -81,7 +81,7 @@ def filter_sharing(msg_wrapper):
         raise
 
     info['articles'] = [
-        {k: v and v.text for a in articles for k, v in a.items()}
+        {k: v and v.text for k, v in a.items()} for a in articles
     ]
     info['received_at'] = msg_wrapper['received_at']
     info['received_day'] = msg_wrapper['received_at'].split()[0]
